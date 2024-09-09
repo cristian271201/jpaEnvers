@@ -5,38 +5,55 @@ import javax.persistence.Persistence;
 
 public class Main {
     public static void main(String[] args) {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("example-unit");
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("example-unit");
 
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        EntityManager em = emf.createEntityManager();
         System.out.println("en marcha Alberto");
 
         try {
             // Persistir una nueva entidad Person
-            entityManager.getTransaction().begin();
+            em.getTransaction().begin();
 
-            Persona person = new Persona("Pepe", 25);
+            Persona persona = Persona.builder().
+                    nombre("Alberto").
+                    edad(60).
+
+                    build();
 
 
-            person.setName("María");
-            person.setAge(60);
+            em.persist(persona);
 
-            entityManager.persist(person);
+            em.getTransaction().commit();
 
-            entityManager.getTransaction().commit();
+            // Actualizar la persona
+            em.getTransaction().begin();
+            persona.setEdad(35);
+            em.getTransaction().commit();
+
+            System.out.println("Persona actualizada: " + persona);
+
+            // Eliminar la persona
+            em.getTransaction().begin();
+            em.remove(persona);
+            em.getTransaction().commit();
+
+            System.out.println("Persona eliminada: " + persona);
+
+
 
 
             // Consultar y mostrar la entidad persistida
-            Persona retrievedPerson = entityManager.find(Persona.class, person.getId());
-            System.out.println("Retrieved Persona: " + retrievedPerson.getName());
+    //        Persona personaRecuperada = em.find(Persona.class, persona.getId());
+   //         System.out.println("Retrieved Persona: " + personaRecuperada.getNombre());
 
         }catch (Exception e){
 
-            entityManager.getTransaction().rollback();
+            em.getTransaction().rollback();
             System.out.println(e.getMessage());
             System.out.println("No se pudo grabar la clase Persona");}
 
         // Cerrar el EntityManager y el EntityManagerFactory
-        entityManager.close();
-        entityManagerFactory.close();
+      em.close();
+        emf.close();
     }
 }
