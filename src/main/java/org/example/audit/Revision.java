@@ -23,7 +23,7 @@ import java.util.Date;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class Revision implements Serializable {
+public class    Revision implements Serializable {
     private static final long serialVersionID = 1L;
 
 
